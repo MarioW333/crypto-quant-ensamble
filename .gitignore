@@ -1,0 +1,21 @@
+# Environments
+.venv/
+venv/
+env/
+
+# Editor / tooling
+.claude/
+.vscode/
+.idea/
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Secrets / local config
+.env
+.envrc
+
+# Raw downloaded data (regenerated on demand; only the small caches are tracked)
+data/raw/
