@@ -9,18 +9,19 @@ headline Sharpe** — the notebook documents 20+ rejected experiments alongside 
 
 Universe: 53 USDT spot pairs on Binance (median daily volume > $5M).
 Train: 2021-01 → 2023-06 · Test: 2023-07 → 2025-12.
-Costs: 15 bps/side for daily signals (10 bps taker + 5 bps slippage), 20 bps/side for the intraday reversal.
+Costs: **20 bps/side** (10 bps Binance taker + 10 bps slippage), industry-conservative for a mixed
+large/mid-cap universe.
 
 | Strategy | SR train | **SR test** | Max DD test | Calmar |
 |---|---:|---:|---:|---:|
 | BTC Buy & Hold | 0.37 | 1.15 | -32.0% | 1.64 |
 | BTC + vol-targeting | 0.39 | 0.86 | -18.5% | 1.01 |
-| 2c Ensemble + Overlay | 1.59 | 1.37 | -11.7% | 1.42 |
-| **★ 3c Ensemble + Overlay ★** | **1.74** | **1.56** | **-10.7%** | **1.55** |
+| 2c Ensemble + Overlay | 1.39 | 1.10 | -13.1% | 1.02 |
+| **★ 3c Ensemble + Overlay ★** | **1.57** | **1.31** | **-11.8%** | **1.18** |
 
-Headline **SR 1.56** at ~11% volatility (≈52% capital deployed). Since Sharpe is
-leverage-invariant, the same edge can be dialed to any risk target (e.g. ~31%/yr at
-20% vol with no borrowing) — see §16.4.
+Headline **SR 1.31** at ~11% volatility, **CAPM alpha vs BTC = +13.4%/yr** with **t-stat +2.00**
+(formally significant at 5%). Since Sharpe is leverage-invariant, the same edge can be dialed to any
+risk target (e.g. ~26%/yr at 20% vol with no borrowing) — see §16.4 of the notebook / §7.3 of the report.
 
 ## Strategy in one paragraph
 
@@ -83,9 +84,11 @@ A full written walkthrough of the methodology, rationale, and results — with f
 
 - Single train/test split (walk-forward stability checks partially mitigate; a per-fold
   re-fit walk-forward would be the next level of rigor).
-- Survivorship bias: the universe requires data through the test period.
+- Survivorship bias: the universe requires data through the test period; ~15.6% of the
+  candidate 64-coin universe was excluded (quantified in §9 of the report).
 - The reversal is the most cost-sensitive and lowest-confidence component (rare 4σ events).
-- Bootstrap 95% CI for the Sharpe is wide ([0.02, 2.99]); the edge is real but estimated
-  with meaningful uncertainty.
+- Bootstrap 95% CI for the Sharpe is wide ([-0.23, 2.77]) and just barely includes zero
+  under the conservative cost assumption; the edge is positive but estimated with meaningful
+  uncertainty.
 
 This is a research notebook, not production code.

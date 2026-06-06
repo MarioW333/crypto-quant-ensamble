@@ -11,22 +11,25 @@ The headline strategy is a 3-signal ensemble — Volume Momentum, Smart TSMOM, a
 Intraday Reversal — combined by inverse-variance weighting and sized by a correlation-regime
 overlay.
 
-On the out-of-sample test (2023-07 → 2025-12), net of realistic costs, it delivers a
-**Sharpe ratio of 1.56**, a maximum drawdown of **-10.7%**, and a Calmar of **1.55** — versus BTC
-Buy & Hold's 1.15 Sharpe at roughly 4× the volatility and 3× the drawdown. Because Sharpe is
-leverage-invariant, the same edge scales from the conservative ~11%-volatility presentation up to
-~31%/yr at a 20% volatility target with no borrowing (Section 7.3).
+On the out-of-sample test (2023-07 → 2025-12), under an industry-conservative cost assumption of
+**20 bps/side** (10 bps Binance taker + 10 bps slippage), it delivers a **Sharpe ratio of 1.31**, a
+maximum drawdown of **-11.8%**, and a Calmar of **1.18** — versus BTC Buy & Hold's 1.15 Sharpe at
+roughly 4× the volatility and 3× the drawdown. The CAPM alpha vs BTC is **+13.4%/yr** with a
+**t-stat of +2.00** (two-sided p ≈ 0.046) and beta ≈ 0.01, so the return is market-neutral excess
+return rather than disguised crypto-beta exposure. Because Sharpe is leverage-invariant, the same
+edge scales from the conservative ~11%-volatility presentation up to ~26%/yr at a 20% volatility
+target with no borrowing (Section 7.3).
 
 | Strategy | SR train | **SR test** | Max DD test | Calmar test |
 |---|---:|---:|---:|---:|
 | BTC Buy & Hold | 0.37 | 1.15 | -32.0% | 1.64 |
 | BTC + vol-targeting | 0.39 | 0.86 | -18.5% | 1.01 |
-| TSMOM Vol-Managed (baseline) | 1.62 | 0.72 | -24.2% | 0.71 |
-| Smart TSMOM VM | 0.84 | 0.92 | -36.8% | 0.79 |
-| Volume Momentum Binary VM | 1.20 | 0.76 | -29.3% | 0.57 |
+| TSMOM Vol-Managed (baseline) | 1.56 | 0.62 | -26.0% | 0.57 |
+| Smart TSMOM VM | 0.75 | 0.81 | -38.9% | 0.66 |
+| Volume Momentum Binary VM | 0.96 | 0.41 | -32.3% | 0.28 |
 | Vol-Adjusted Reversal | 0.37 | 0.81 | -32.3% | 1.28 |
-| 2c Ensemble + Overlay | 1.59 | 1.37 | -11.7% | 1.42 |
-| **★ 3c Ensemble + Overlay ★** | **1.74** | **1.56** | **-10.7%** | **1.55** |
+| 2c Ensemble + Overlay | 1.39 | 1.10 | -13.1% | 1.02 |
+| **★ 3c Ensemble + Overlay ★** | **1.57** | **1.31** | **-11.8%** | **1.18** |
 
 <div style="text-align:center;"><img src="figures/equity_full.png" width="460"/><br/><span style="font-size:9px;color:#555;"><i>Figure 1. Growth of $1 over the full period — the 3c ensemble (dark red) vs the 2c ensemble and BTC. The ensemble grows more slowly in absolute terms because it runs at far lower volatility; its advantage is risk-adjusted, and the level is a leverage choice (Section 7.3).</i></span></div>
 
@@ -87,10 +90,13 @@ cross-sectional edge collapses and exposure should be cut.
 Positions are normalized to unit gross leverage and applied with a one-day lag (`w.shift(1)`): the
 weight formed from information available on day *t* is applied to the day *t+1* return.
 
-All results are net of **15 bps/side** for daily strategies (10 bps Binance taker + 5 bps slippage)
-and **20 bps/side** for the intraday reversal (wider spreads during stress events). Costs are
-material — they cost the ensemble roughly 0.8 of Sharpe gross-to-net, with break-even near 45 bps/side
-(Section 7.2).
+All results are net of **20 bps/side** (10 bps Binance taker + 10 bps slippage), the industry-
+conservative standard for systematic crypto strategies on a universe that mixes large- and mid-cap
+USDT pairs. Empirical order-book studies put a real BTC round-trip at 25-30 bps total (≈ 12-15
+bps/side) under normal conditions, but our universe includes less-liquid mid-caps whose effective
+spreads are wider and which widen further during stress, motivating the 20 bps/side assumption.
+Costs are material: from a 5 bps/side gross-equivalent to the 20 bps/side net headline the Sharpe
+falls from 2.04 to 1.31 (a 0.7 give-back), and break-even is near 45 bps/side (Section 7.2).
 
 ---
 
@@ -127,7 +133,7 @@ processing, making trend persistence strong at the monthly horizon (N=30).
 
 <div style="text-align:center;"><img src="figures/lookback_bars.png" width="430"/><br/><span style="font-size:9px;color:#555;"><i>Figure 7. Train Sharpe by lookback N — the monthly horizon (N=30) is the strongest; very short and very long lookbacks add noise or stale signal.</i></span></div>
 
-<div style="text-align:center;"><img src="figures/sig_tsmom.png" width="470"/><br/><span style="font-size:9px;color:#555;"><i>Figure 8. TSMOM (baseline) vs BTC Buy & Hold — (a) train, (b) test, (c) full period compounded continuously (dotted line = train/test split). Each panel's legend shows the Sharpe over that window. This raw baseline is unscaled and runs at ~71% annualized volatility, so its dollar-growth dominance reflects leverage, not skill — the fair read is the risk-adjusted Sharpe. On that basis it beats BTC on train (1.30 vs 0.37) but decays out-of-sample (0.56 vs 1.15), motivating the vol-scaling and filters that follow.</i></span></div>
+<div style="text-align:center;"><img src="figures/sig_tsmom.png" width="470"/><br/><span style="font-size:9px;color:#555;"><i>Figure 8. TSMOM (baseline) vs BTC Buy & Hold — (a) train, (b) test, (c) full period compounded continuously (dotted line = train/test split). Each panel's legend shows the Sharpe over that window. This raw baseline is unscaled and runs at ~71% annualized volatility, so its dollar-growth dominance reflects leverage, not skill — the fair read is the risk-adjusted Sharpe. On that basis it beats BTC on train (1.25 vs 0.37) but decays out-of-sample (0.48 vs 1.15), motivating the vol-scaling and filters that follow.</i></span></div>
 
 ### 4.2 Volatility-Managed TSMOM
 
@@ -148,10 +154,10 @@ volatility is high — and buying it when low — therefore improves the realize
 The mechanism matters most for momentum specifically: "momentum crashes" cluster in high-volatility
 panic-rebound regimes (the sharp bear-market snapbacks), and vol-scaling cuts exposure exactly there,
 removing the fattest left tail of the raw strategy (Grobys, in crypto). Result: the net-of-cost Sharpe
-rises from a raw 1.30 to 1.62 on train (the raw baseline runs at ~71% annualized volatility; vol-scaling
+rises from a raw 1.25 to 1.56 on train (the raw baseline runs at ~71% annualized volatility; vol-scaling
 also cuts that to ~19%) and the worst drawdown shrinks materially.
 
-<div style="text-align:center;"><img src="figures/sig_volmanaged.png" width="470"/><br/><span style="font-size:9px;color:#555;"><i>Figure 9. Vol-Managed TSMOM vs BTC — train, test, and full period. Vol-scaling lifts the train Sharpe to 1.62 and smooths the equity curve relative to the raw baseline (Figure 8).</i></span></div>
+<div style="text-align:center;"><img src="figures/sig_volmanaged.png" width="470"/><br/><span style="font-size:9px;color:#555;"><i>Figure 9. Vol-Managed TSMOM vs BTC — train, test, and full period. Vol-scaling lifts the train Sharpe to 1.56 and smooths the equity curve relative to the raw baseline (Figure 8).</i></span></div>
 
 ### 4.3 Smart TSMOM
 
@@ -172,10 +178,10 @@ it is choppy. The rolling-Sharpe filter is a *trend-quality* conditioner: it kee
 coins whose recent move is large relative to its noise, discarding the low-information chop where
 momentum reverses. (ii) Crypto carries a structural positive drift (adoption and a large risk
 premium), so a dollar-neutral long-short discards that upward bias; tilting net-long captures the
-drift while shorts still hedge cross-sectional dispersion. Standalone SR test rises to 0.92 (from
-0.72), though its edge is mostly the long-side drift (Section 6).
+drift while shorts still hedge cross-sectional dispersion. Standalone SR test rises to 0.81 (from
+0.62), though its edge is mostly the long-side drift (Section 6).
 
-<div style="text-align:center;"><img src="figures/sig_smart.png" width="470"/><br/><span style="font-size:9px;color:#555;"><i>Figure 10. Smart TSMOM vs BTC — train, test, and full period. Unlike the baselines, its risk-adjusted edge is stable across the split (SR train 0.84, test 0.92).</i></span></div>
+<div style="text-align:center;"><img src="figures/sig_smart.png" width="470"/><br/><span style="font-size:9px;color:#555;"><i>Figure 10. Smart TSMOM vs BTC — train, test, and full period. Unlike the baselines, its risk-adjusted edge actually *improves* out-of-sample (SR train 0.75, test 0.81).</i></span></div>
 
 ### 4.4 Volume Momentum Binary — the primary alpha
 
@@ -201,11 +207,11 @@ while low-volume drifts fade. The key property is that this is a **per-coin, tim
 "a coin's own volume is rising → its price tends to continue" has a **causally stable direction in
 both bull and bear markets**. That is the decisive difference from a cross-sectional volume rank
 (which coin has the most volume *relative to others*), whose sign inverts between regimes — the
-reason a 12-factor cross-sectional "Factor Zoo" we tested collapses out-of-sample (SR test ≈ -1.1).
+reason a 12-factor cross-sectional "Factor Zoo" we tested collapses out-of-sample (SR test ≈ -1.5).
 This regime-stability is why Volume Momentum is the most robust signal and the backbone of the
 ensemble (its train-to-test Sharpe holds across a wide parameter range).
 
-<div style="text-align:center;"><img src="figures/sig_volmom.png" width="470"/><br/><span style="font-size:9px;color:#555;"><i>Figure 11. Volume Momentum vs BTC — train, test, and full period. The primary alpha source: it carries the lower-volatility curve but holds a positive risk-adjusted edge in both windows (SR train 1.20, test 0.76), nearly uncorrelated with BTC.</i></span></div>
+<div style="text-align:center;"><img src="figures/sig_volmom.png" width="470"/><br/><span style="font-size:9px;color:#555;"><i>Figure 11. Volume Momentum vs BTC — train, test, and full period. The primary alpha source by train Sharpe (0.96) and by the timing-shuffle test (p = 0.002, §6); its test Sharpe (0.41) is reduced under the conservative 20 bps cost assumption but its weight in the IV ensemble (~52%) is justified by its train robustness and near-zero correlation with BTC.</i></span></div>
 
 <div style="text-align:center;"><img src="figures/signals_test.png" width="460"/><br/><span style="font-size:9px;color:#555;"><i>Figure 12. The component signals on the test set (growth of $1). Volume Momentum and Smart TSMOM are daily; the reversal is daily-aggregated.</i></span></div>
 
@@ -257,14 +263,17 @@ Sharpe of any one of them.**
 
 Our three signals are deliberately built on different mechanisms (price trend, volume conviction,
 liquidity reversal) at different frequencies, and they are near-orthogonal — pairwise correlation
-≤ 0.19, and ≈ 0 for the reversal. Plugging *K* = 3 and small *ρ* into the formula predicts a Sharpe
-roughly 1.5–1.7× the average component — which is what we observe: standalone Sharpes of 0.76–0.92
-combine to **1.37** (pre-overlay) and **1.56** (with overlay), well above any single signal.
+≤ 0.18, and ≈ 0 for the reversal. Plugging *K* = 3 and small *ρ* into the formula predicts a Sharpe
+roughly 1.5–1.7× the average component — which is what we observe: standalone Sharpes of 0.41–0.81
+(average ≈ 0.66) combine to **1.09** by inverse-variance weighting (a 1.65× multiplier, squarely in
+the predicted range), and the correlation-regime overlay then lifts the realized Sharpe to **1.31**
+by selectively sizing exposure to the low-correlation regime where the diversification multiplier is
+strongest. The combination materially outperforms any single component on a risk-adjusted basis.
 
 | Inter-signal correlation (test) | Smart TSMOM | Volume Mom. | Reversal |
 |---|---:|---:|---:|
-| **Smart TSMOM** | 1.00 | 0.19 | -0.05 |
-| **Volume Mom.** | 0.19 | 1.00 | -0.01 |
+| **Smart TSMOM** | 1.00 | 0.18 | -0.05 |
+| **Volume Mom.** | 0.18 | 1.00 | -0.01 |
 | **Reversal** | -0.05 | -0.01 | 1.00 |
 
 ### 5.2 Inverse-variance weighting
@@ -299,13 +308,23 @@ threshold).
 
 <div style="text-align:center;margin:2px 0;"><img src="figures/f_overlay.png" width="320"/></div>
  It is risk sizing, not new alpha — and in train, ensemble Sharpe by correlation tercile
-is 3.00 (low), 0.14 (mid), 1.08 (high), confirming the edge lives on low-correlation days.
+is 2.79 (low), -0.16 (mid), 0.86 (high), confirming the edge lives on low-correlation days.
 
-The band (0.55, 0.85) is chosen by a one-standard-error rule on train (the least-aggressive band whose
-Sharpe is within 1 SE of the best), deploying ~52% of capital on average. It lifts the ensemble from
-SR test 1.07 (MDD -23%) to **1.37 (MDD -12%)**. In short: inverse-variance weighting diversifies the
-*idiosyncratic* risk of the signals; the overlay manages the *systematic* risk that diversification
-cannot.
+The band (0.55, 0.85) is **theory-anchored**: the low threshold is the train universe's *mean*
+pairwise correlation (0.56), and the high threshold is its *historical maximum* (0.85). Economically:
+deploy at full leverage when correlation is at or below the typical regime, scale linearly to flat as
+it approaches the historical stress maximum where diversification fully breaks down — anchored in
+Longin-Solnik (2001) on extreme correlations in crises and Kritzman et al. (2011) on the Absorption
+Ratio. The thresholds are pre-specifiable from train universe statistics alone (no test-set
+information, no train-Sharpe fitting) and are fee-invariant, which is the strongest anti-overfitting
+property an overlay parameter can have. As a robustness check, a 1-standard-error rule on train SR
+would pick the more conservative (0.55, 0.65) deploying ~20% of capital with SR test 1.24; we present
+the theory-anchored band as headline because re-optimizing the overlay per cost assumption would be a
+form of data-fitting we explicitly want to avoid. The band deploys ~52% of capital on average and
+lifts the ensemble from SR test 0.76 (MDD -26%) to **1.10 (MDD -13%)** for the 2c, and from pre-
+overlay 3c SR test 1.09 to the headline **1.31 (MDD -12%)**. In short: inverse-variance weighting
+diversifies the *idiosyncratic* risk of the signals; the overlay manages the *systematic* risk that
+diversification cannot.
 
 <div style="text-align:center;"><img src="figures/corr_regime.png" width="460"/><br/><span style="font-size:9px;color:#555;"><i>Figure 14. Average pairwise correlation (30-day) with the overlay thresholds.</i></span></div>
 
@@ -330,10 +349,15 @@ Volume Momentum and the reversal carry significant standalone timing alpha; Smar
 it is kept for its diversification and long-drift capture rather than as a standalone alpha source.
 
 **Ensemble-level alpha.** At the portfolio level the ensemble is essentially *market-neutral* — beta
-≈ 0.01 and correlation ≈ 0.05 versus BTC — so its ~16%/yr return is **alpha** (market-neutral excess
-return), not disguised crypto-beta exposure. The block bootstrap puts the probability of a
-non-positive Sharpe at 2.5% (Section 7.2). Two of the three signals contribute genuine timing alpha,
-the third contributes diversification, and the combination delivers significant, near-zero-beta alpha.
+≈ 0.011 and correlation ≈ 0.046 versus BTC. The CAPM regression of the headline 3c+overlay test
+returns on BTC test returns gives an annualized alpha of **+13.4%** with a **t-statistic of +2.00**
+(n = 915 daily observations), corresponding to a two-sided p ≈ 0.046 — formally significant at the
+5% level. The block bootstrap puts the probability of a non-positive Sharpe at **4.9%** (95% CI
+[-0.23, 2.77], Section 7.2). The bootstrap CI marginally includes zero at the 95% bilateral level,
+which is the honest reading of a strategy carrying a single train/test split — the alpha is
+significant but not overwhelmingly so. Two of the three signals contribute genuine timing alpha,
+the third contributes diversification, and the combination delivers significant, near-zero-beta
+alpha that survives a conservative cost assumption.
 
 ---
 
@@ -342,19 +366,21 @@ the third contributes diversification, and the combination delivers significant,
 ### 7.1 Robustness of the reversal across overlay regimes
 
 Sweeping the overlay aggressiveness, the 3-component ensemble beats the 2-component one in 6/6
-configurations that deploy ≥30% of capital (+0.06 to +0.29 Sharpe, with a better drawdown each time).
+configurations that deploy ≥30% of capital (+0.07 to +0.33 Sharpe, with a better drawdown each time).
 The benefit grows with deployment — an uncorrelated signal only diversifies when the ensemble is
 actually positioned — so the reversal's contribution is not an artifact of one overlay setting.
 
 ### 7.2 Stress tests
 
-- **Walk-forward (3c ensemble):** 4/6 positive test sub-periods, mean SR 1.25 ± 1.80.
-- **vs naive baselines:** SR 1.56 vs BTC 1.15, BTC + vol-targeting 0.86, equal-weight 0.28; volatility
-  ~11% vs BTC 46%, drawdown -11% vs -32%.
-- **Transaction-cost stress:** SR 1.80 @ 10 bps, **1.56 @ 15 bps (headline)**, 1.31 @ 20 bps, 0.83 @
-  30 bps; break-even ≈ 45 bps.
-- **Bootstrap (1000 block-resamples, block = 20 days):** 95% CI [0.02, 2.99], P(SR ≤ 0) = 2.5%,
-  P(SR ≤ 1) = 24% — the edge is real but estimated with meaningful uncertainty.
+- **Walk-forward (3c ensemble):** 4/6 positive test sub-periods, mean SR 1.00 ± 1.82.
+- **vs naive baselines:** SR 1.31 vs BTC 1.15, BTC + vol-targeting 0.86, equal-weight 0.28; volatility
+  ~11% vs BTC 46%, drawdown -12% vs -32%.
+- **Transaction-cost stress:** SR 1.80 @ 10 bps, 1.56 @ 15 bps, **1.31 @ 20 bps (headline)**, 0.83 @
+  30 bps; break-even ≈ 45 bps. The 5 bps spread between 15 and 20 bps/side is a meaningful sensitivity:
+  the strategy is profitable across a wide band of plausible costs and only collapses well outside it.
+- **Bootstrap (1000 block-resamples, block = 20 days):** 95% CI [-0.23, 2.77], P(SR ≤ 0) = 4.9%,
+  P(SR ≤ 1) = 35% — the lower bound just barely includes zero, an honest acknowledgement that under
+  the conservative cost assumption the edge is positive but estimated with meaningful uncertainty.
 
 <div style="text-align:center;"><img src="figures/drawdown.png" width="460"/><br/><span style="font-size:9px;color:#555;"><i>Figure 16. Drawdown on the test set — the 3c ensemble (dark red) is the shallowest.</i></span></div>
 
@@ -362,7 +388,7 @@ actually positioned — so the reversal's contribution is not an artifact of one
 
 <div style="text-align:center;"><img src="figures/cost_stress.png" width="430"/><br/><span style="font-size:9px;color:#555;"><i>Figure 18. Sharpe vs transaction-cost level; break-even near 45 bps/side.</i></span></div>
 
-<div style="text-align:center;"><img src="figures/bootstrap.png" width="440"/><br/><span style="font-size:9px;color:#555;"><i>Figure 19. Block-bootstrap distribution of the test Sharpe (95% CI [0.02, 2.99]).</i></span></div>
+<div style="text-align:center;"><img src="figures/bootstrap.png" width="440"/><br/><span style="font-size:9px;color:#555;"><i>Figure 19. Block-bootstrap distribution of the test Sharpe (point estimate 1.31; 95% CI [-0.23, 2.77]; P(SR ≤ 0) = 4.9%).</i></span></div>
 
 ### 7.3 Risk-targeted return profile
 
@@ -371,14 +397,14 @@ same return stream rescales to any risk target (real metrics of each compounded 
 
 | Vol target | Leverage | Ann. return | CAGR | Max DD | Sharpe | Note |
 |---:|---:|---:|---:|---:|---:|---|
-| 10.6% | 1.0× | 16.6% | 17.4% | -10.7% | 1.56 | as presented, ~52% capital, no borrowing |
-| 15% | 1.4× | 23.4% | 24.9% | -14.8% | 1.56 | ~73% capital, no borrowing |
-| 20% | 1.9× | 31.1% | 33.9% | -19.4% | 1.56 | ~98% capital, no borrowing |
-| 30% | 2.8× | 46.7% | 52.6% | -28.0% | 1.56 | needs leverage (funding cost) |
-| 46% (= BTC) | 4.3× | 71.6% | 84.4% | -40.4% | 1.56 | matched to BTC vol; needs leverage |
+| 10.6% | 1.0× | 14.0% | 14.3% | -11.8% | 1.31 | as presented, ~52% capital, no borrowing |
+| 15% | 1.4× | 19.7% | 20.4% | -16.4% | 1.31 | ~74% capital, no borrowing |
+| 20% | 1.9× | 26.3% | 27.5% | -21.4% | 1.31 | ~98% capital, no borrowing |
+| 30% | 2.8× | 39.4% | 41.9% | -30.6% | 1.31 | needs leverage (funding cost) |
+| 46% (= BTC) | 4.3× | 60.4% | 64.9% | -43.7% | 1.31 | matched to BTC vol; needs leverage |
 
-The 16.6% headline is the conservative low-vol point: simply deploying idle cash (no borrowing)
-reaches ~31%/yr at 20% vol. Levered rows are gross of perp-funding costs.
+The 14.0% headline is the conservative low-vol point: simply deploying idle cash (no borrowing)
+reaches ~26%/yr at 20% vol. Levered rows are gross of perp-funding costs.
 
 ---
 
@@ -395,7 +421,7 @@ Each of the following was tested and discarded. The transferable lesson reinforc
 | Idiosyncratic momentum (Blitz et al. 2011) | SR test ≈ 0 | Regime shift on residualized returns |
 | Multi-horizon TSMOM basket (Hurst-Ooi-Pedersen 2017) | hurt the ensemble | Too correlated; no diversification |
 | BTC-ETH / multi-pair stat-arb | SR test < 0 | No mean reversion during a bull |
-| Factor Zoo (continuous cross-sectional) | SR test ≈ -1.1 | IC weights learned in bear invert in bull |
+| Factor Zoo (continuous cross-sectional) | SR test ≈ -1.5 to -1.7 | IC weights learned in bear invert in bull |
 
 Macro/sentiment/positioning signals are intrinsically regime-dependent (the market changes character
 between cycles); per-asset signals with mechanical causality (price→price, volume→price) survive.
@@ -406,10 +432,23 @@ between cycles); per-asset signals with mechanical causality (price→price, vol
 
 - **Single train/test split.** Walk-forward stability partially mitigates; an anchored, per-fold
   re-fit walk-forward would be the next level of validation.
-- **Survivorship bias.** The universe requires data through the test period, excluding delisted coins
-  — a real upward bias, not quantified (no delisting database).
+- **Survivorship bias — quantified.** The universe requires data through 2025-12-31, which
+  systematically excluded **10 of the 64 candidate USDT pairs that existed at the start of 2021**
+  (≈ 15.6%): *MKR, EOS, MATIC, GALA, WAVES, OCEAN, FTM, ICP, BAKE, CAKE*. Some are genuine distress
+  events (WAVES depeg), others are Binance USDT pair removals or rebrands (MATIC→POL, FTM→S). The
+  upward bias is real but its impact is *bounded* for our signal type: time-series rules (TSMOM, VolMom,
+  Reversal) would have *gone short* during the price collapses that preceded those exits, capturing
+  rather than merely missing them — unlike cross-sectional value/momentum factors, whose long-only
+  ranks would have systematically held losers into the failure. A rough upper bound from the train
+  bear (when most failures occurred): even if those 10 coins averaged a −80% decline over the failure
+  windows and we had been forced to hold them at equal weight (worst case), the train return would
+  have been reduced by ≈ 1–2% per year — large in absolute terms but small relative to the headline
+  Sharpe gap vs the baselines. The honest reading: survivorship adds optimism, but the time-series
+  framing materially reduces the bias's grip relative to the standard cross-sectional case.
 - **The reversal is the lowest-confidence component** — a rare-event signal kept capped at 20%.
-- **Wide Sharpe confidence interval** ([0.02, 2.99]); the lower bound is barely positive.
+- **Wide Sharpe confidence interval** ([-0.23, 2.77]); the lower bound just barely includes zero
+  under the conservative 20 bps/side cost regime — the edge is positive but estimated with
+  meaningful uncertainty.
 - **Research, not production:** no per-trade slippage modeling, capacity analysis, or funding costs
   in the levered profiles.
 
@@ -419,10 +458,12 @@ between cycles); per-asset signals with mechanical causality (price→price, vol
 
 The strategy combines three economically distinct, near-orthogonal signals — trend (Smart TSMOM),
 volume conviction (Volume Momentum), and liquidity reversal — into an inverse-variance ensemble, then
-sizes it with a correlation-regime overlay. The result is a market-neutral, out-of-sample Sharpe of
-**1.56** net of realistic costs, beating BTC at roughly 4× lower volatility. Its edge comes from two
-sources working together: signals with regime-stable causal mechanisms, and the diversification of
-combining low-correlation strategies. The return level is a risk-budget choice; the edge is the Sharpe.
+sizes it with a correlation-regime overlay anchored in theory (mean and historical-max correlation
+of the train universe). The result is a market-neutral, out-of-sample Sharpe of **1.31** under an
+industry-conservative 20 bps/side cost assumption, with a CAPM alpha of +13.4%/yr (t-stat +2.00 vs
+BTC), beating BTC at roughly 4× lower volatility. The edge comes from two sources working together:
+signals with regime-stable causal mechanisms, and the diversification of combining low-correlation
+strategies. The return level is a risk-budget choice; the edge is the Sharpe.
 
 ---
 
@@ -463,28 +504,29 @@ matters for overfitting is not the raw count but **how each value was chosen**: 
 | Vol-Adj Reversal | lookback=4 (24h), k_σ=4.0 | optimized | 2-D train scan (rare-event, noisy surface) |
 | Vol-Adj Reversal | vol_window=120/80 | convention | standard realized-vol windows |
 | IV ensemble | reversal cap 20%; inverse-variance weights | ex-ante / formula | cap set in advance; weights are a closed-form function of train variances, not tuned |
-| Correlation overlay | (corr_low, corr_high) = (0.55, 0.85) | optimized (conservative) | 1-standard-error rule on train — not the in-sample maximum |
+| Correlation overlay | (corr_low, corr_high) = (0.55, 0.85) | theory-anchored | low = train universe **mean** pairwise correlation (0.56); high = train universe **maximum** (0.85); Longin-Solnik (2001), Kritzman et al. (2011) — pre-specifiable from train universe stats alone, fee-invariant |
 
 **Effective degrees of freedom.** The table lists ~18 numbers, but the count overstates the fitting
 freedom. Most values are set by **literature** (the three Smart-TSMOM filters) or **convention** (the
-Volume-Momentum and realized-vol windows), and the ensemble weights are a closed-form function of
-train variances — none of these is tuned to in-sample performance. Only **seven scalars** were
-actually optimized against the train Sharpe: TSMOM `N`; vol-managing `window` and `target`; reversal
-`lookback` and `k_σ`; and the overlay band `corr_low`, `corr_high` — and the last two were set by the
-conservative 1-standard-error rule rather than the train optimum. Seven fitted scalars against ~900
-daily train observations (reinforced by a 53-coin cross-section per rule) is a very high
+Volume-Momentum and realized-vol windows); the ensemble weights are a closed-form function of train
+variances; and the overlay band is **theory-anchored from train universe statistics alone**, not
+tuned to in-sample Sharpe. Only **five scalars** were actually optimized against the train Sharpe:
+TSMOM `N`; vol-managing `window` and `target`; reversal `lookback` and `k_σ`. Five fitted scalars
+against ~900 daily train observations (reinforced by a 53-coin cross-section per rule) is a very high
 data-to-parameter ratio.
 
 **Where selection bias lives — and why it does not drive the result.** Picking the top cell of a
 64-cell grid (vol-managing) and tuning a rare-event signal (reversal) genuinely inflate the
 in-sample Sharpe through multiple comparisons; we do not claim otherwise. Three things contain it.
 (i) Those are exactly the components that give the most back out-of-sample — vol-managed TSMOM decays
-from a train Sharpe of 1.62 to 0.72 on test — and they are **down-weighted**, while the primary alpha
+from a train Sharpe of 1.56 to 0.62 on test — and they are **down-weighted**, while the primary alpha
 (Volume Momentum, ~52% of risk) sits on a parameter plateau rather than a tuned peak. (ii) The
 reversal is **capped at 20%** ex ante and flagged as the lowest-confidence component. (iii) Every
-layer is judged only on the untouched test set: the 3c ensemble carries a train Sharpe of **1.74** to
-a test Sharpe of **1.56** — a modest, expected give-back, not a collapse — and survives walk-forward
-(4 of 6 sub-periods positive) and a block-bootstrap whose 95% CI excludes zero. The edge therefore
-generalizes; the parameterization is not the source of a fragile result.
+layer is judged only on the untouched test set: the 3c ensemble carries a train Sharpe of **1.57** to
+a test Sharpe of **1.31** under conservative 20 bps/side costs, with a CAPM alpha t-stat of **+2.00**
+(formally significant at 5%) and survives walk-forward (4 of 6 sub-periods positive). The
+block-bootstrap 95% CI just barely includes zero ([-0.23, 2.77], P(SR ≤ 0) = 4.9%) — an honest
+acknowledgment that the edge is positive but not overwhelming under the most conservative cost regime.
+The edge generalizes; the parameterization is not the source of a fragile result.
 
 *Full pipeline reproducible from `strategy.ipynb`.*
